@@ -1,52 +1,19 @@
-git clone https://github.com/your-username/employee-dashboard-test.git
-    cd employee-dashboard-test
-    ```
-    (Replace `https://github.com/your-username/employee-dashboard-test.git` with the actual repository URL if hosted.)
+# employee-dashboard-test: Employee Dashboard with Department Filtering
 
-2.  **Ensure `employees.csv` is present:**
-    Make sure an `employees.csv` file is located in the root directory of the project. This file should contain your employee data, typically with columns like `name`, `salary`, etc., though only salary is strictly needed for the average salary calculation.
+## Summary
 
-3.  **Open the application in your browser:**
-    You can directly open the `index.html` file in your web browser. Due to browser security restrictions regarding local file access (e.g., `file://` protocol), it's often better to serve the project using a simple local HTTP server.
+This project introduces a significant enhancement to the existing Employee Dashboard, focusing on improved data filtering and analysis capabilities. The primary update is the integration of a new "Department" filter, presented as a dropdown select menu. Users can now filter the displayed employee data by specific departments. When a department is selected, the dashboard dynamically updates the key metrics, such as the total employee count and the average salary, to reflect only the employees belonging to the chosen department. An "All Departments" option is also provided, allowing users to easily reset the view and see the aggregated data for all employees across the organization. This update aims to provide more granular insights into departmental performance and statistics.
 
-    **Using a local HTTP server (recommended):**
-    If you have Python installed, you can use its built-in server:
-    ```bash
-    python -m http.server 8000
-    ```
-    Then, open your web browser and navigate to `http://localhost:8000`.
+## Usage
 
-    If you prefer Node.js, you can install `http-server`:
-    ```bash
-    npm install -g http-server
-    http-server -p 8000
-    ```
-    Then, navigate to `http://localhost:8000`.
+To utilize the new department filtering feature:
 
-    Once loaded, the webpage will display the total employee count and the calculated average salary.
+1.  **Navigate to the Dashboard:** Access the main Employee Dashboard interface.
+2.  **Locate the Department Filter:** You will find a new dropdown select menu, typically labeled "Filter by Department" or similar, usually positioned near other filtering or data controls.
+3.  **Select a Department:** Click on the dropdown and choose a specific department (e.g., "Engineering", "Marketing", "HR").
+4.  **Observe Dynamic Updates:** Upon selection, the employee count, average salary, and any other relevant employee listings on the dashboard will immediately update to display data exclusively for employees within the selected department.
+5.  **Reset View:** To clear the department filter and view data for all employees, simply select the "All Departments" option from the dropdown menu.
 
 ## License
-This project is licensed under the MIT License.
 
-```
-MIT License
-
-Copyright (c) [Year] [Your Name or Project Maintainers]
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+This project is open-sourced under the MIT License.
