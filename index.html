@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Data Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        h1 {
+            color: #0056b3;
+            margin-bottom: 25px;
+        }
+        h2 {
+            color: #007bff;
+            margin: 15px 0;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Employee Statistics</h1>
+        <h2 id="employee-count">Loading Employee Count...</h2>
+        <h2 id="average-salary">Loading Average Salary...</h2>
+    </div>
+
+    <script>
+        // Simulate employees.csv content
+        const csvData = `employee_name,salary
+Maria Johnson,75000
+James Brown,68000
+Alice White,92000
+Robert Down,x7000
+Emily Martinez,x9000`;
+
+        function processEmployeeData() {
+            const lines = csvData.trim().split('\n');
+            let employeeCount = 0;
+            let totalSalary = 0;
+            let validSalaryCount = 0;
+
+            // Start from the second line to skip the header
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i];
+                if (line.trim() === '') continue; // Skip empty lines
+
+                const parts = line.split(',');
+                if (parts.length === 2) {
+                    employeeCount++; // Increment count for every employee record
+
+                    const salaryStr = parts[1].trim();
+                    const salary = parseFloat(salaryStr);
+
+                    // Only include valid, positive salaries in the average calculation
+                    if (!isNaN(salary) && salary > 0) {
+                        totalSalary += salary;
+                        validSalaryCount++;
+                    }
+                }
+            }
+
+            // Calculate average salary, handle division by zero if no valid salaries
+            const averageSalary = validSalaryCount > 0 ? totalSalary / validSalaryCount : 0;
+
+            // Update the H2 elements on the page
+            document.getElementById('employee-count').innerText = `Total Employees: ${employeeCount}`;
+            document.getElementById('average-salary').innerText = `Average Salary: $${averageSalary.toFixed(2)}`;
+        }
+
+        // Run the data processing function once the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', processEmployeeData);
+    </script>
+</body>
+</html>
