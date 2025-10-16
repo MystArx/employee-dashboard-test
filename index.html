@@ -34,29 +34,80 @@
             margin: 15px 0;
             font-size: 1.5em;
         }
+        .filter-section {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-section label {
+            font-weight: bold;
+            color: #555;
+            font-size: 1.1em;
+        }
+        .filter-section select {
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            color: #333;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            outline: none;
+            min-width: 180px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            -webkit-appearance: none; /* Remove default arrow on some browsers */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%20173.5c-4.1%204.1-10.7%204.1-14.8%200L146.2%2047.8%2020.3%20173.5c-4.1%204.1-10.7%204.1-14.8%200l-7.4-7.4c-4.1-4.1-4.1-10.7%200-14.8L138.8%2025.7c4.1-4.1%2010.7-4.1%2014.8%200l126.3%20125.6c4.1%204.1%204.1%2010.7%200%2014.8l-7.4%207.4z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 12px;
+        }
+        .filter-section select:hover {
+            border-color: #007bff;
+        }
+        .filter-section select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Employee Statistics</h1>
+
+        <div class="filter-section">
+            <label for="department-filter">Filter by Department:</label>
+            <select id="department-filter">
+                <!-- Options will be populated by JavaScript -->
+            </select>
+        </div>
+
         <h2 id="employee-count">Loading Employee Count...</h2>
         <h2 id="average-salary">Loading Average Salary...</h2>
     </div>
 
     <script>
-        // Simulate employees.csv content
-        const csvData = `employee_name,salary
-Maria Johnson,75000
-James Brown,68000
-Alice White,92000
-Robert Down,x7000
-Emily Martinez,x9000`;
+        // Use the updated employees.csv content
+        const csvData = `employee_name,department,salary
+Maria Johnson,HR,7000
+James Brown,IS,6800
+Alice White,Marketing,9200
+Robert Down,IT,7000
+Emily Martinez,HR,9000`;
 
-        function processEmployeeData() {
+        let allEmployees = []; // Stores parsed employee objects
+        let uniqueDepartments = []; // Stores unique department names
+
+        /**
+         * Parses the CSV data, populating `allEmployees` and `uniqueDepartments`.
+         */
+        function parseCsvData() {
             const lines = csvData.trim().split('\n');
-            let employeeCount = 0;
-            let totalSalary = 0;
-            let validSalaryCount = 0;
+            const employees = [];
+            const departments = new Set(); // Use a Set to automatically handle unique departments
 
             // Start from the second line to skip the header
             for (let i = 1; i < lines.length; i++) {
@@ -64,21 +115,45 @@ Emily Martinez,x9000`;
                 if (line.trim() === '') continue; // Skip empty lines
 
                 const parts = line.split(',');
-                if (parts.length === 2) {
-                    employeeCount++; // Increment count for every employee record
+                if (parts.length === 3) { // Expecting 3 parts: name, department, salary
+                    const employee = {
+                        name: parts[0].trim(),
+                        department: parts[1].trim(),
+                        salary: parseFloat(parts[2].trim()) // Parse salary as a number
+                    };
+                    employees.push(employee);
+                    departments.add(employee.department); // Add department to the set
+                }
+            }
+            allEmployees = employees;
+            uniqueDepartments = Array.from(departments).sort(); // Convert Set to array and sort alphabetically
+        }
 
-                    const salaryStr = parts[1].trim();
-                    const salary = parseFloat(salaryStr);
+        /**
+         * Updates the dashboard with employee statistics based on the selected department.
+         * @param {string} selectedDepartment - The department to filter by, or 'All Departments'.
+         */
+        function updateDashboard(selectedDepartment) {
+            let employeeCount = 0;
+            let totalSalary = 0;
+            let validSalaryCount = 0;
 
-                    // Only include valid, positive salaries in the average calculation
-                    if (!isNaN(salary) && salary > 0) {
-                        totalSalary += salary;
-                        validSalaryCount++;
-                    }
+            // Filter employees based on the selected department
+            const employeesToProcess = selectedDepartment === 'All Departments'
+                ? allEmployees
+                : allEmployees.filter(emp => emp.department === selectedDepartment);
+
+            for (const employee of employeesToProcess) {
+                employeeCount++; // Increment count for every employee record in the filtered list
+
+                // Only include valid, positive salaries in the average calculation
+                if (!isNaN(employee.salary) && employee.salary > 0) {
+                    totalSalary += employee.salary;
+                    validSalaryCount++;
                 }
             }
 
-            // Calculate average salary, handle division by zero if no valid salaries
+            // Calculate average salary, handling division by zero if no valid salaries
             const averageSalary = validSalaryCount > 0 ? totalSalary / validSalaryCount : 0;
 
             // Update the H2 elements on the page
@@ -86,8 +161,36 @@ Emily Martinez,x9000`;
             document.getElementById('average-salary').innerText = `Average Salary: $${averageSalary.toFixed(2)}`;
         }
 
-        // Run the data processing function once the DOM is fully loaded
-        document.addEventListener('DOMContentLoaded', processEmployeeData);
+        // Run the data parsing and dashboard update once the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            parseCsvData(); // Parse the CSV data once on page load
+
+            const departmentFilter = document.getElementById('department-filter');
+
+            // Add 'All Departments' option as the first choice
+            const allOption = document.createElement('option');
+            allOption.value = 'All Departments';
+            allOption.innerText = 'All Departments';
+            departmentFilter.appendChild(allOption);
+
+            // Add unique department options from the parsed data
+            uniqueDepartments.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept;
+                option.innerText = dept;
+                departmentFilter.appendChild(option);
+            });
+
+            // Set the initial value of the dropdown to 'All Departments'
+            departmentFilter.value = 'All Departments';
+            // Update the dashboard initially with all employees
+            updateDashboard(departmentFilter.value);
+
+            // Add an event listener to update the dashboard when the department filter changes
+            departmentFilter.addEventListener('change', (event) => {
+                updateDashboard(event.target.value);
+            });
+        });
     </script>
 </body>
 </html>
